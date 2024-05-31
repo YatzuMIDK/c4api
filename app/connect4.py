@@ -1,3 +1,5 @@
+import uuid
+
 class Connect4:
     ROWS = 6
     COLUMNS = 7
