@@ -18,13 +18,13 @@ class GameStateResponse(BaseModel):
 app = FastAPI()
 games: Dict[str, Connect4] = {}
 
-@app.post("/create_game", response_model=CreateGameResponse)
+@app.post("/crear", response_model=CreateGameResponse)
 def create_game():
     game_id = str(uuid.uuid4())
     games[game_id] = Connect4()
     return CreateGameResponse(game_id=game_id)
 
-@app.post("/drop_piece/{game_id}", response_model=GameStateResponse)
+@app.post("/drop/{game_id}", response_model=GameStateResponse)
 def drop_piece(game_id: str, request: DropPieceRequest):
     game = games.get(game_id)
     if not game:
@@ -33,7 +33,7 @@ def drop_piece(game_id: str, request: DropPieceRequest):
         raise HTTPException(status_code=400, detail="Invalid move")
     return GameStateResponse(board=game.board, current_player=game.current_player, winner=game.winner)
 
-@app.get("/game_state/{game_id}", response_model=GameStateResponse)
+@app.get("/game/{game_id}", response_model=GameStateResponse)
 def get_game_state(game_id: str):
     game = games.get(game_id)
     if not game:
