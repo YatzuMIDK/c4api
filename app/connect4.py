@@ -1,11 +1,13 @@
-import uuid
-
 class Connect4:
     ROWS = 6
     COLUMNS = 7
     EMPTY = 0
     PLAYER1 = 1
     PLAYER2 = 2
+    
+    EMPTY_EMOJI = "⬛"
+    PLAYER1_EMOJI = "🔴"
+    PLAYER2_EMOJI = "🟡"
     
     def __init__(self):
         self.board = [[self.EMPTY for _ in range(self.COLUMNS)] for _ in range(self.ROWS)]
@@ -44,3 +46,16 @@ class Connect4:
             if count >= 4:
                 return True
         return False
+    
+    def get_board_with_emojis(self) -> str:
+        emoji_board = ""
+        for row in self.board:
+            for cell in row:
+                if cell == self.EMPTY:
+                    emoji_board += self.EMPTY_EMOJI
+                elif cell == self.PLAYER1:
+                    emoji_board += self.PLAYER1_EMOJI
+                elif cell == self.PLAYER2:
+                    emoji_board += self.PLAYER2_EMOJI
+            emoji_board += "\n"
+        return emoji_board.strip()
