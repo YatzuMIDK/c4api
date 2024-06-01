@@ -8,10 +8,11 @@ class CreateGameResponse(BaseModel):
     game_id: str
 
 class DropPieceRequest(BaseModel):
+    player: int
     column: int
 
 class GameStateResponse(BaseModel):
-    board: List[List[int]]
+    board: str
     current_player: int
     winner: Optional[int]
 
@@ -29,13 +30,21 @@ def drop_piece(game_id: str, request: DropPieceRequest):
     game = games.get(game_id)
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
+    
+    if game.winner:
+        raise HTTPException(status_code=400, detail="The game has already been won.")
+    
+    if game.current_player != request.player:
+        raise HTTPException(status_code=400, detail="It is not the turn of this player.")
+    
     if not game.drop_piece(request.column):
         raise HTTPException(status_code=400, detail="Invalid move")
-    return GameStateResponse(board=game.board, current_player=game.current_player, winner=game.winner)
+    
+    return GameStateResponse(board=game.get_board_with_emojis(), current_player=game.current_player, winner=game.winner)
 
-@app.get("/game/{game_id}", response_model=GameStateResponse)
+@app.get("/game_state/{game_id}", response_model=GameStateResponse)
 def get_game_state(game_id: str):
     game = games.get(game_id)
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
-    return GameStateResponse(board=game.board, current_player=game.current_player, winner=game.winner)
+    return GameStateResponse(board=game.get_board_with_emojis(), current_player=game.current_player, winner=game.winner)
