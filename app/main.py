@@ -1,7 +1,6 @@
 from typing import List, Optional, Dict
 from fastapi import FastAPI, HTTPException
 from datetime import datetime
-from pythonping import ping
 from pydantic import BaseModel
 import uuid
 from app.connect4 import Connect4
@@ -27,11 +26,8 @@ def get_server_details():
     uptime = datetime.now() - start_time
     uptime_str = str(uptime).split('.')[0]
     
-    # Calcular el ping
-    ping_result = ping('8.8.8.8', count=5)
-    avg_ping = sum(ping_result.rtt) / len(ping_result.rtt)
     
-    return {"uptime": uptime_str, "ping": avg_ping}
+    return {"uptime": uptime_str}
 
 @app.get("/")
 def root():
