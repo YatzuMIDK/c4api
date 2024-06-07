@@ -18,6 +18,22 @@ class GameStateResponse(BaseModel):
 
 app = FastAPI()
 games: Dict[str, Connect4] = {}
+start_time = datetime.now()
+# Función para obtener detalles de tiempo de actividad y ping
+def get_server_details():
+    # Calcular el tiempo de actividad
+    uptime = datetime.now() - start_time
+    uptime_str = str(uptime).split('.')[0]
+    
+    # Calcular el ping
+    ping_result = ping('8.8.8.8', count=5)
+    avg_ping = sum(ping_result.rtt) / len(ping_result.rtt)
+    
+    return {"uptime": uptime_str, "ping": avg_ping}
+
+@app.get("/")
+def root():
+    return get_server_details()
 
 @app.post("/crear", response_model=CreateGameResponse)
 def create_game():
